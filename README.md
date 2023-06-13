@@ -71,7 +71,7 @@ To make sure that the decision to insert a record is based only on the columns p
 
 ### Issue 1: changes in schemas
 
-The `daily_delta_g_creatives` scheduled query is vulnerable to possible changes in the schema (columns and their data types) of the underlying `creative_stats` table. Google occasionally modifies the schema of the `creative_stats` table. This has happened in August 2021 when Google added Brazil to its archive. This led to addition of two new columns `spend_range_min_brl` and `spend_range_max_brl` that were not present when our own table was created. 
+The `daily_delta_g_creatives` scheduled query is vulnerable to possible changes in the schema (columns and their data types) of the underlying `creative_stats` table. Google occasionally modifies the schema of the `creative_stats` table. This has happened in August 2021 when Google added Brazil to its archive. This led to addition of two new columns `spend_range_min_brl` and `spend_range_max_brl` - spend in Brazilian Reals - that were not present when our own table was created. 
 
 Because the query imports all columns (i.e., uses the `select * ...` statement where `*` means "all columns"), there was a mismatch in columns, and the query failed. The problem was resolved by adding two new columns into our table. At the time, BigQuery supported only adding new columns at the end (i.e, it does not have "after column_x" capability to specify where exactly a new column must be inserted), so our table has the two new columns after the `import_date` and `import_time`.
 
