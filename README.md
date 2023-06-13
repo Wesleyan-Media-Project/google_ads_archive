@@ -75,6 +75,11 @@ The `daily_delta_g_creatives` scheduled query is vulnerable to possible changes 
 
 Because the query imports all columns (i.e., uses the `select * ...` statement where `*` means "all columns"), there was a mismatch in columns, and the query failed. The problem was resolved by adding two new columns into our table. At the time, BigQuery supported only adding new columns at the end (i.e, it does not have "after column_x" capability to specify where exactly a new column must be inserted), so our table has the two new columns after the `import_date` and `import_time`.
 
+Fortunately, owing to the email notifications supported by BigQuery, it was very easy to catch the error and fix it.
+
+Changes in the schema would not affect the `add_g_advertiser_spend` query because it explicitly lists the columns that it imports.
+
+
 ### Issue 2: changes of advertiser IDs
 
 The second issue does not affect the ability to import the data, but it does impact the ability to view the ad. 
