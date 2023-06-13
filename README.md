@@ -63,7 +63,9 @@ The fields that may change are:
 
 The last two items in the list represent several columns, one for each currency. For the ads that ran in the US, the columns are `spend_range_min_usd` and `spend_range_max_usd`. There are similar columns for other currencies. We did not want to impose prior judgment on which columns will matter, thus we import all columns for every record.
 
-The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` clause in the query. It will include those rows that are not present in the bottom part of the query following the EXCEPT clause. Our own table contains the columns for the date and time of the data insertion. They are derived from the parameters `@run_date` and `@run_time` available from BigQuery.
+The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` clause in the query. It will include those rows that are not present in the bottom part of the query following the EXCEPT clause. 
+
+Our own table contains the columns for the date and time of the data insertion. They are derived from the parameters `@run_date` and `@run_time` available from BigQuery.
 
 To make sure that the decision to insert a record is based only on the columns present in the `google_political_ads` dataset, we exclude the `import_date` and `import_time` from the comparison query. This is done using the statement `SELECT * EXCEPT(import_date, import_time)`
 
