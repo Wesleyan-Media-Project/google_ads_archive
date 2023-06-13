@@ -14,10 +14,12 @@ The following tables are of particular interest:
 * `advertiser_stats` - "lifetime" total stats for advertisers.
 * `creative_stats` - "lifetime" total stats about the ads, one row per ad.
 
-Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We take advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
+Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We took advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
 
 ## Data import through scheduled transfers
 
+BigQuery has a function known as "scheduled transfers" - the user can define a data import query and that query will run on a schedule. For technical details, please see this documentation [page](https://cloud.google.com/bigquery/docs/scheduling-queries)
 
+The 
 
 
