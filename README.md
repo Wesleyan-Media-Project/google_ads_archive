@@ -67,3 +67,21 @@ The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` cl
 
 To make sure that the decision to insert a record is based only on the columns present in the `google_political_ads` dataset, we exclude the `import_date` and `import_time` from the comparison query. This is done using the statement `SELECT * EXCEPT(import_date, import_time)`
 
+## Possible issues
+
+### Issue 1: changes in schemas
+
+The `daily_delta_g_creatives` scheduled query is vulnerable to possible changes in the schema (columns and their data types) of the underlying `creative_stats` table. Google occasionally modifies the schema of the `creative_stats` table. This has happened in August 2021 when Google added Brazil to its archive. This led to addition of two new columns `spend_range_min_brl` and `spend_range_max_brl` that were not present when our own table was created. 
+
+Because the query imports all columns (i.e., uses the `select * ...` statement where `*` means "all columns"), there was a mismatch in columns, and the query failed. The problem was resolved by adding two new columns into our table. At the time, BigQuery supported only adding new columns at the end (i.e, it does not have "after column_x" capability to specify where exactly a new column must be inserted), so our table has the two new columns after the `import_date` and `import_time`.
+
+### Issue 2: changes of advertiser IDs
+
+The second issue does not affect the ability to import the data, but it does impact the ability to view the ad. 
+
+An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on teh Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different. When that happens, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
+
+
+## Getting the ads' content
+
+In contrast to Facebook/Meta, Google's archive does not have the content of the ads, even when the ad consists only of text. The only content-related field is `ad_type` which takes the values `TEXT`, `IMAGE` or `VIDEO`. To retrieve the contents of the ads we, with the permission of the Google Political Ads Transparency team, scrape the ads and store them in a local database on a server maintained by WMP.
