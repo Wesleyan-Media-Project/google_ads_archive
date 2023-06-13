@@ -24,7 +24,7 @@ BigQuery has a functionality known as "scheduled queries" - the user can define 
 
 We take a full snapshot of the `advertiser_stats` table once a day (3 pm EST, 7 pm UTC). For the `creative_stats` table, we query it every hour and keep only the new records. The queries are provided in the SQL script files in this repository: `add_g_advertiser_spend.sql` and `daily_delta_g_creatives.sql`
 
-### The cumulative stats of advertisers query:
+### The `add_g_advertiser_spend` query:
 ```
 insert into g_ads_targeting.my_advertiser_stats 
     select advertiser_id, advertiser_name, public_ids_list, regions, elections, 
@@ -38,7 +38,7 @@ insert into g_ads_targeting.my_advertiser_stats
 ```
 In addition to the columns from the underlying table in the `google_political_ads` dataset, the query stores a field dervied from the the parameter `@run_date` which is available during execution of the query (see the documentation [section](https://cloud.google.com/bigquery/docs/scheduling-queries#available_parameters)).
 
-### The creative stats delta query:
+### The `daily_delta_g_creatives` query:
 
 ```
 insert into `wmp-project.g_ads_targeting.creative_stats_delta` 
@@ -51,7 +51,9 @@ insert into `wmp-project.g_ads_targeting.creative_stats_delta`
         a.spend_range_min_brl, spend_range_max_brl from a;
 ```
 
-This query inserts only those records from the underlying table which are new. This may mean a record for an entirely new ad, or a record for an ad that has changed. The fields that may change are:
+This query inserts only those records from the underlying table which are new. This may mean a record for an entirely new ad, or a record for an ad that has changed. This is why the query has the "delta" in its name. This approach is similar to how we ingest Facebook ads where we store a record only if it is different from the one already in our system. See the "Exclusion of duplicate records" [section](https://github.com/Wesleyan-Media-Project/fb_ads_import#exclusion-of-duplicate-records) in the `fb_ads_import` repository.
+
+The fields that may change are:
 * `date_range_end` - end of the range of dates during which the ad was active
 * `num_of_days` - number of days in the date range when the ad was active
 * `impressions` - a bucket for the impressions number, for instance `1000-2000`
@@ -64,6 +66,4 @@ The last two items in the list represent several columns, one for each currency.
 The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` clause in the query. It will include those rows that are not present in the bottom part of the query following the EXCEPT clause. Our own table contains the columns for the date and time of the data insertion. They are derived from the parameters `@run_date` and `@run_time` available from BigQuery.
 
 To make sure that the decision to insert a record is based only on the columns present in the `google_political_ads` dataset, we exclude the `import_date` and `import_time` from the comparison query. This is done using the statement `SELECT * EXCEPT(import_date, import_time)`
-
-
 
