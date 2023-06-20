@@ -91,9 +91,10 @@ As an illustration, let's walk through the process of creating a query that will
 
 Step 1: Open the SQL editor in the console. Paste the SQL statement from the file `daily_delta_g_creative.sql`.
 
-Step 2: Click on the SCHEDULE -> Create scheduled query menu items at the top of the editor pane. The screenshot below shows the location of the menu buttons.
+Step 2: Click on the SCHEDULE -> Create new scheduled query menu items at the top of the editor pane. The screenshot below shows the location of the menu buttons.
 
-<img width="681" alt="Screenshot showing part of an SQL script and the SCHEDULE button" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/9a84eae7-edfb-4342-a872-cf64d0643768">
+<img width="678" alt="Screenshot of SQL code editor window and the SCHEDULE button" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/b08e5863-f839-47a3-9a54-297b541ca55e">
+
 
 Step 3: Clicking on the "Create scheduled query" will open a pop-up tab on the right of the screen. Here you will need to enter the required parameters:
 
@@ -121,8 +122,8 @@ WMP focuses on the US-based activity and, because of this, the table creation sc
 
 Our earlier iteration of the scripts would import all currency columns. We encountered two problems in this regard: 
 
-1. Some of the currency columns do not have an expected data type. For instance, in the `advertiser_spend` source table, there were issues with the Indian Rupee and Hungarian Forint columns. 
-2. Changes in schema. Google may add new columns for currencies of countries that were added to the archive. This happened with New Zealand dollars and Brazilian Real. To avoid these problems, our script hard-coded the list of columns. If you choose to use `select * ...` statement to import multiple currency columns, you need to pay attention to the possible changes. 
+1. Some of the currency columns do not have an expected data type. For instance, in the `advertiser_spend` source table, there were issues with the Indian Rupee and Hungarian Forint columns. We had to use `SAFE_CAST(xxxx as STRING)` to import them as strings instead.
+2. Changes in schema. Google may add new columns for currencies of countries that were added to the archive. This happened with New Zealand dollars and Brazilian Real. To avoid these problems, our script hard-coded the list of columns. If you choose to use `select * ...` statement to import multiple currency columns, you need to pay attention to the possible changes. Fortunately, the email notifications are very prompt and you will be aware of the problem within minutes after it happened.
 
 
 ### Issue 2: changes of advertiser IDs
@@ -131,6 +132,24 @@ The second issue does not affect the ability to import the data, but it does imp
 
 An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on teh Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different. When that happens, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
 
+## Analyzing data in BigQuery
+
+Once you have your scheduled queries running, you can start analyzing the data directly in the browser. Here is an example query that will return data on ten ads that had more than one record. This kind of data is useful in determining the cost per impression of an ad:
+
+```
+with a as (select ad_id, count(*) as N 
+  from wmp-sandbox.my_ad_archive.google_creative_delta 
+  where regions = 'US'
+  group by ad_id
+  HAVING N > 1
+  LIMIT 10)
+select ad_id, advertiser_name, ad_type, ad_url, impressions, spend_range_min_usd, spend_range_max_usd, import_time
+from my_ad_archive.google_creative_delta
+inner join a using (ad_id)
+order by ad_id, import_time;
+```
+
+You can also use the BigQuery connector in Google Sheets to work with the data. Read this [document](https://support.google.com/docs/answer/9702507?hl=en) for instructions.
 
 ## Getting the ads' content
 
