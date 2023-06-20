@@ -145,7 +145,7 @@ As a result, **the `ad_url` field in the old ad record is not longer valid**: th
 
 ## Analyzing data in BigQuery
 
-Once you have your scheduled queries running, you can start analyzing the data directly in the browser. Here is an example query that will return data on ten ads that had more than one record. This kind of data is useful in determining the cost per impression of an ad:
+Once you have your scheduled queries running, you can start analyzing the data directly in the browser. Here is an example query that will return data on 10 ads that had more than one record. This kind of data is useful in determining the cost per impression of an ad:
 
 ```
 with a as (select ad_id, count(*) as N 
@@ -158,6 +158,23 @@ with a as (select ad_id, count(*) as N
 select ad_id, advertiser_name, ad_type, ad_url, impressions, spend_range_min_usd, spend_range_max_usd, import_time
 from wmp-sandbox.my_ad_archive.google_creative_delta
 inner join a using (ad_id)
+order by ad_id, import_time;
+```
+
+The query below will return the latest impressions for 10 ads owned by `DCCC` - Democratic Congressional Campaign Committee:
+
+```
+with a as (select ad_id, max(import_time) as max_time 
+  from my_ad_archive.google_creative_delta 
+  where regions = 'US'
+  and advertiser_name = 'DCCC'
+  group by ad_id
+  limit 10)
+select x.ad_id, advertiser_name, ad_type, ad_url, impressions, spend_range_min_usd, spend_range_max_usd, import_time
+from my_ad_archive.google_creative_delta as x
+inner join a 
+on a.ad_id = x.ad_id 
+and a.max_time = x.import_time
 order by ad_id, import_time;
 ```
 
