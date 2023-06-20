@@ -141,10 +141,11 @@ with a as (select ad_id, count(*) as N
   from wmp-sandbox.my_ad_archive.google_creative_delta 
   where regions = 'US'
   group by ad_id
-  HAVING N > 1
-  LIMIT 10)
+  having N > 1
+  order BY N desc
+  limit 10)
 select ad_id, advertiser_name, ad_type, ad_url, impressions, spend_range_min_usd, spend_range_max_usd, import_time
-from my_ad_archive.google_creative_delta
+from wmp-sandbox.my_ad_archive.google_creative_delta
 inner join a using (ad_id)
 order by ad_id, import_time;
 ```
