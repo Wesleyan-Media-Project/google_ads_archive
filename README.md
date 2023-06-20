@@ -139,7 +139,9 @@ Our earlier iteration of the scripts would import all currency columns. We encou
 
 The second issue does not affect the ability to import the data, but it does impact the ability to view the ad. 
 
-An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on teh Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different. When that happens, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
+An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on the Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different. 
+
+As a result, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
 
 ## Analyzing data in BigQuery
 
