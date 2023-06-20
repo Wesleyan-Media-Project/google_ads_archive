@@ -104,11 +104,20 @@ Step 3: Clicking on the "Create scheduled query" will open a pop-up tab on the r
 * Under "Notification settings", check the box for "Send notification emails". GCP/BigQuery will send an email to the email account associated with the owner of the project if the query fails.
 * Click "SAVE" to save the query. BigQuery will launch the first import operation.
 
+The process for the `add_g_advertiser_spend.sql` script is the same, except you will need to pick a different name.
+
+### Changing the run-times and configuration
+
 The console for managing the scheduled queries is accessed by clicking on the menu item in the left part of the screen (see the screenshot below).
 
 <img width="240" alt="Screenshot of BigQuery menu ite4ms" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/8b00a362-c9e8-420c-a7d4-3953f0832950">
 
-The process for the `add_g_advertiser_spend.sql` script is the same, except you will need to pick a different name.
+The menu will take you to a page that will allow you to see the history of the runs and also edit the configuration.
+
+As an example, below is a screenshot of the "Scheduled queries" dashboard. You can see that the `import_creatives_delta` has successfully finished, while `add_g_advertiser_spend` was running.
+
+<img width="1146" alt="Screenshot of the scheduled queries dashboard" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/dcd62034-8973-4898-b08c-8fb8c135d966">
+
 
 ## Potential adjustments and issues
 
