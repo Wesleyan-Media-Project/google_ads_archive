@@ -69,7 +69,7 @@ In addition to the columns from the source table, the scheduled query will inser
 
 ```
 
-As with the advertiser stats, we focus on the US elections. This is reflected in the choice of the columns: the source table contains data for the currencies of the all countries where Google runs political ads (for instance, `spend_range_min_brl` and `spend_range_max_brl` for Brazil). We ignore these columns and keep only the `spend_range_min_usd` and `spend_range_max_usd`. We also keep the `spend_usd` column, even though it appears that Google itself is not using it: this column is always empty.
+As with the advertiser stats, we focus on the US elections. This is reflected in the choice of the columns: the underlying source table contains data for the currencies of the all countries where Google runs political ads (for instance, `spend_range_min_brl` and `spend_range_max_brl` for Brazil). We ignore these columns and keep only the `spend_range_min_usd` and `spend_range_max_usd`. We also keep the `spend_usd` column, even though it appears that Google itself is not using it: this column is always empty.
 
 The `daily_delta_g_creatives` query inserts only those records from the underlying table which are new. This may mean a record for an entirely new ad, or a record for an ad that has changed. This is why the query has the "delta" in its name. This approach is similar to how we ingest Facebook ads where we store a record only if it is different from the one already in our system. See the "Exclusion of duplicate records" [section](https://github.com/Wesleyan-Media-Project/fb_ads_import#exclusion-of-duplicate-records) in the `fb_ads_import` repository.
 
