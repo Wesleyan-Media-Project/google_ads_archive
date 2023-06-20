@@ -4,7 +4,7 @@
 
 ## Data in BigQuery
 
-Both Facebook and Google started their archives of political ads about the same time - in May 2018. The approaches that the companies took are quite different. Facebook posts CSV files with summary statistics and has an API that outsiders can use to search for the ads. Google did not create an API and isntead offers a web portal and summary reports.
+Both Facebook and Google started their archives of political ads about the same time - in May 2018. The approaches that the companies took are quite different. Facebook posts CSV files with summary statistics and has an API that outsiders can use to search for the ads. Google did not create an API and instead offers a web portal and summary reports.
 
 These reports are available as CSV files and as a dataset hosted in the `bigquery-public-data` project in [BigQuery](https://cloud.google.com/bigquery) - a data warehouse in the Google Cloud Platform (GCP). Below is a screenshot of the tables in the dataset:
 
