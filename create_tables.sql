@@ -1,4 +1,4 @@
-create or replace table intro-sql-workshop.my_ad_archive.google_advertiser_agg_spend
+create or replace table wmp-sandbox.my_ad_archive.google_advertiser_agg_spend
 (
     advertiser_id STRING, 
     advertiser_name STRING, 
@@ -10,7 +10,7 @@ create or replace table intro-sql-workshop.my_ad_archive.google_advertiser_agg_s
     import_date DATE,
     import_time TIMESTAMP);
 
-create or replace table intro-sql-workshop.my_ad_archive.google_creative_delta
+create or replace table wmp-sandbox.my_ad_archive.google_creative_delta
 (
     ad_id STRING, 
     ad_url STRING, 

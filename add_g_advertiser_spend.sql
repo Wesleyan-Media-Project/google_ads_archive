@@ -1,7 +1,7 @@
 -- this is a scheduled query add_g_advertiser_spend
 -- it runs once a day and inserts a snapshot of the whole archive
 -- into the table that WMP owns
-insert into intro-sql-workshop.my_ad_archive.google_advertiser_agg_spend
+insert into wmp-sandbox.my_ad_archive.google_advertiser_agg_spend
     select advertiser_id, 
         advertiser_name, 
         public_ids_list, 

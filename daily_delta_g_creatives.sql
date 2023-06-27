@@ -1,5 +1,6 @@
 -- query that will be saved as scheduled query "import_creatives_delta"
-insert into `intro-sql-workshop.my_ad_archive.google_creative_delta` 
+insert into `wmp-sandbox.my_ad_archive.google_creative_delta` 
+-- assuming the project name to be "wmp-sandbox"
     with a as (select 
         ad_id, 
         ad_url, 
@@ -45,7 +46,7 @@ insert into `intro-sql-workshop.my_ad_archive.google_creative_delta`
             spend_range_min_usd, 
             spend_range_max_usd
 
-        from `intro-sql-workshop.my_ad_archive.google_creative_delta`) 
+        from `wmp-sandbox.my_ad_archive.google_creative_delta`) 
     select a.*,  
         CAST(@run_date as DATE) as import_date, CAST(@run_time as TIMESTAMP) as import_time, 
         from a;
