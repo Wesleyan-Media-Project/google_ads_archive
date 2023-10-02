@@ -1,8 +1,49 @@
-# google_ads_archive
+# Wesleyan Media Project - google_ads_archive
 
-# How Wesleyan Media Project collects Google ads
+Welcome! This repo is a part of the Cross-platform Election Advertising Transparency initiatIVE ([CREATIVE](https://www.creativewmp.com/)) project. CREATIVE is a joint infrastructure project of WMP and privacy-tech-lab at Wesleyan University. CREATIVE provides cross-platform integration and standardization of political ads collected from Google and Facebook.
 
-## Data in BigQuery
+This repo is a part of the Data Collection step.
+
+## Table of Contents
+
+
+- [Introduction](#introduction)
+
+- [Objective](#objective)
+
+- [Data](#data)
+    - [What can you do with this data?](what-can-you-do-with-this-data)
+
+- [Setup](#setup)
+    - [Creating your own tables](#creating-your-own-tables)
+    - [Setting up scheduled queries](#setting-up-scheduled-queries)
+        - [Columns imported by the `add_g_advertiser_spend` query:](#columns-imported-by-the-add_g_advertiser_spend-query)
+        - [Columns imported by the `daily_delta_g_creatives.sql` scheduled query:](#columns-imported-by-the-daily_delta_g_creativessql-scheduled-query)
+    - [Creating the scheduled queries](#creating-the-scheduled-queries)
+    - [Changing the run-times and configuration](#changing-the-run-times-and-configuration)
+    - [Potential adjustments and issues](#potential-adjustments-and-issues)
+        - [Adjustments](#adjustments)
+        - [Issues](#issues)
+          - [Issue 1: columns and data types](#issue-1-columns-and-data-types)
+          - [Issue 2: changes of advertiser IDs](#issue-2-changes-of-advertiser-ids)
+    - [Analyzing data in BigQuery](#analyzing-data-in-bigquery)
+    - [Getting the ads' content](#getting-the-ads-content)
+
+## Introduction
+The purpose of this repository is to provide the scripts that replicate the workflow used by the Wesleyan Media Project to collect Google ads using BigQuery. 
+
+## Objective
+
+Each of our repos belongs to one or more of the following categories:
+- Data Collection
+- Data Storage & Processing
+- Preliminary Data Classification
+- Final Data Classification
+
+This repo is part of the Data Collection section.
+
+## Data
+### Data in BigQuery
 
 Both Facebook and Google started their archives of political ads about the same time - in May 2018. The approaches that the companies took are quite different. Facebook posts CSV files with summary statistics and has an API that outsiders can use to search for the ads. Google did not create an API and instead offers a web portal and summary reports.
 
@@ -18,7 +59,12 @@ The following tables are of particular interest:
 
 Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We took advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
 
-## Creating your own tables
+### What can you do with this data?
+Similar to the Facebook ads, we believe that this data can be used as a basis for political ads research. It has the potential to be used in research, database creation, monitoring, and other applications.
+
+## Setup
+
+### Creating your own tables
 
 This section will guide you through the steps of creating the tables in BigQuery so you could replicate WMP's workflow.
 
@@ -36,13 +82,13 @@ Be careful: the statements from the file will perform "create or replace ..." op
 
 Please read the "Potential adjustments and issues" section below for a discussion of how you might need to adjust the queries.
 
-## Setting up scheduled queries
+### Setting up scheduled queries
 
 BigQuery has a functionality known as "scheduled queries" - the user can define a data import query and that query will run on a schedule. This functionality is similar to having crontab jobs running on a regular server. A nice feature is that, in case of failure, BigQuery will send an email notification. For technical details, please see this documentation [page](https://cloud.google.com/bigquery/docs/scheduling-queries)
 
 We take a full snapshot of the `advertiser_stats` table once a day. For the `creative_stats` table, we query it every hour and keep only the new records. The queries are provided in the SQL script files in this repository: `add_g_advertiser_spend.sql` and `daily_delta_g_creatives.sql`
 
-### Columns imported by the `add_g_advertiser_spend` query:
+#### Columns imported by the `add_g_advertiser_spend` query:
 
 Below is the list of the columns imported from the advertiser spend table. We are assuming that you are based in the United States and are interested in the US advertisers. Because of this, we are importing only the column `spend_usd`, which reports the advertiser spend in US dollars. If you are operating in a different country, please make sure to replace the column `spend_usd` both in the definitional query (the `create_tables.sql`) and in the scheduled query.
 
@@ -53,7 +99,7 @@ advertiser_id, advertiser_name, public_ids_list, regions, elections, total_creat
 
 In addition to the columns from the source table, the scheduled query will insert columns `import_date` and `import_time`. They are generated from the parameters available during the execution of the query. 
 
-### Columns imported by the `daily_delta_g_creatives.sql` scheduled query:
+#### Columns imported by the `daily_delta_g_creatives.sql` scheduled query:
 
 ```
     ad_id, ad_url, ad_type, regions, 
@@ -119,7 +165,7 @@ As an example, below is a screenshot of the "Scheduled queries" dashboard. You c
 <img width="1146" alt="Screenshot of the scheduled queries dashboard" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/dcd62034-8973-4898-b08c-8fb8c135d966">
 
 
-## Potential adjustments and issues
+### Potential adjustments and issues
 
 ### Adjustments
 
@@ -127,7 +173,7 @@ WMP focuses on the US-based activity and, because of this, the table creation sc
 
 ### Issues
 
-#### Issue 1: columns and data types
+### Issue 1: columns and data types
 
 Our earlier iteration of the scripts would import all currency columns. We encountered two problems in this regard: 
 
@@ -143,7 +189,7 @@ An ad record includes information about the advertiser, specifically the adverti
 
 As a result, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
 
-## Analyzing data in BigQuery
+### Analyzing data in BigQuery
 
 Once you have your scheduled queries running, you can start analyzing the data directly in the browser. Here is an example query that will return data on 10 ads that had more than one record. This kind of data is useful in determining the cost per impression of an ad:
 
@@ -180,6 +226,6 @@ order by ad_id, import_time;
 
 You can also use the BigQuery connector in Google Sheets to work with the data. Read this [document](https://support.google.com/docs/answer/9702507?hl=en) for instructions.
 
-## Getting the ads' content
+### Getting the ads' content
 
 In contrast to Facebook/Meta, Google's archive does not have the content of the ads, even when the ad consists only of text. The only content-related field is `ad_type` which takes the values `TEXT`, `IMAGE` or `VIDEO`. To retrieve the contents of the ads we, with the permission of the Google Political Ads Transparency team, scrape the ads and store them in a local database on a server maintained by WMP.
