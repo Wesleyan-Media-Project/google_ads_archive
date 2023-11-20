@@ -70,7 +70,7 @@ This section will guide you through the steps of creating the tables in BigQuery
 
 Step 1: if you have not done it yet, register with Google Cloud Platform and create a project. The scripts in this repo expect that you have a project named `wmp-sandbox`. If you choose a different name, please don't forget to modify it in the scripts as well. For more details about creating a GCP project, please see the official documentation at this [link](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 
-Step 2: Go to BigQuery page in GCP console. You can find the "BigQuery" card in the project dashboard, or you can search for it in the drop-down list of services. You can also try navigating directly following this link: [https://console.cloud.google.com/bigquery](https://console.cloud.google.com/bigquery)
+Step 2: Go to BigQuery page in GCP console. You can find the "BigQuery" card in the project dashboard, or you can search for it in the drop-down list of services. You can also try navigating directly by following this link: [https://console.cloud.google.com/bigquery](https://console.cloud.google.com/bigquery)
 
 Step 3: Create a BigQuery dataset. In this repo, the scripts expect you to have a dataset named `my_ad_archive`. To create a dataset, locate your project in the EXPLORER tab in BigQuery console, click on the vertical ellipses next to the name of your project, and choose "Create Dataset". For more details, please see this [documentation page](https://cloud.google.com/bigquery/docs/datasets#create-dataset). Select the tab that describes the console-based workflow.
 
