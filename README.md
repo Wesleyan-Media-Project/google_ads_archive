@@ -4,45 +4,50 @@ Welcome! This repo is a part of the Cross-platform Election Advertising Transpar
 
 This repo is a part of the Data Collection step.
 
-## Table of Contents
+![A picture of the repo pipeline with this repo highlighted](Creative_Pipelines.png)
 
+## Table of Contents
 
 - [Introduction](#introduction)
 
 - [Objective](#objective)
 
 - [Data](#data)
-    - [What can you do with this data?](what-can-you-do-with-this-data)
+
+  - [What can you do with this data?](what-can-you-do-with-this-data)
 
 - [Setup](#setup)
-    - [Creating your own tables](#creating-your-own-tables)
-    - [Setting up scheduled queries](#setting-up-scheduled-queries)
-        - [Columns imported by the `add_g_advertiser_spend` query:](#columns-imported-by-the-add_g_advertiser_spend-query)
-        - [Columns imported by the `daily_delta_g_creatives.sql` scheduled query:](#columns-imported-by-the-daily_delta_g_creativessql-scheduled-query)
-    - [Creating the scheduled queries](#creating-the-scheduled-queries)
-    - [Changing the run-times and configuration](#changing-the-run-times-and-configuration)
-    - [Potential adjustments and issues](#potential-adjustments-and-issues)
-        - [Adjustments](#adjustments)
-        - [Issues](#issues)
-          - [Issue 1: columns and data types](#issue-1-columns-and-data-types)
-          - [Issue 2: changes of advertiser IDs](#issue-2-changes-of-advertiser-ids)
-    - [Analyzing data in BigQuery](#analyzing-data-in-bigquery)
-    - [Getting the ads' content](#getting-the-ads-content)
+  - [Creating your own tables](#creating-your-own-tables)
+  - [Setting up scheduled queries](#setting-up-scheduled-queries)
+    - [Columns imported by the `add_g_advertiser_spend` query:](#columns-imported-by-the-add_g_advertiser_spend-query)
+    - [Columns imported by the `daily_delta_g_creatives.sql` scheduled query:](#columns-imported-by-the-daily_delta_g_creativessql-scheduled-query)
+  - [Creating the scheduled queries](#creating-the-scheduled-queries)
+  - [Changing the run-times and configuration](#changing-the-run-times-and-configuration)
+  - [Potential adjustments and issues](#potential-adjustments-and-issues)
+    - [Adjustments](#adjustments)
+    - [Issues](#issues)
+      - [Issue 1: columns and data types](#issue-1-columns-and-data-types)
+      - [Issue 2: changes of advertiser IDs](#issue-2-changes-of-advertiser-ids)
+  - [Analyzing data in BigQuery](#analyzing-data-in-bigquery)
+  - [Getting the ads' content](#getting-the-ads-content)
 
 ## Introduction
-The purpose of this repository is to provide the scripts that replicate the workflow used by the Wesleyan Media Project to collect Google ads using BigQuery. 
+
+The purpose of this repository is to provide the scripts that replicate the workflow used by the Wesleyan Media Project to collect Google ads using BigQuery.
 
 ## Objective
 
 Each of our repos belongs to one or more of the following categories:
-- Data Collection
-- Data Storage & Processing
-- Preliminary Data Classification
-- Final Data Classification
 
-This repo is part of the Data Collection section.
+- Data Collection
+- Data Processing
+- Data Classification
+- Compiled Final Data
+
+This repo is part of the Data Collection step.
 
 ## Data
+
 ### Data in BigQuery
 
 Both Facebook and Google started their archives of political ads about the same time - in May 2018. The approaches that the companies took are quite different. Facebook posts CSV files with summary statistics and has an API that outsiders can use to search for the ads. Google did not create an API and instead offers a web portal and summary reports.
@@ -52,14 +57,16 @@ These reports are available as CSV files and as a dataset hosted in the `bigquer
 <img width="291" alt="Listing of tables available in the Google's political ads archive in BigQuery" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/c6d16686-f634-4b1b-a067-a8a1c80a6b89">
 
 The following tables are of particular interest:
-* `advertiser_declared_stats` - provides regulatory information on the advertiser.
-* `advertiser_weekly_spend` - weekly updates on advertisers' spending. If an advertiser was not active in a specific week, there is no record for that week. The spends are reported in increments of $100.
-* `advertiser_stats` - "lifetime" total stats for advertisers.
-* `creative_stats` - "lifetime" total stats about the ads, one row per ad.
+
+- `advertiser_declared_stats` - provides regulatory information on the advertiser.
+- `advertiser_weekly_spend` - weekly updates on advertisers' spending. If an advertiser was not active in a specific week, there is no record for that week. The spends are reported in increments of $100.
+- `advertiser_stats` - "lifetime" total stats for advertisers.
+- `creative_stats` - "lifetime" total stats about the ads, one row per ad.
 
 Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We took advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
 
 ### What can you do with this data?
+
 Similar to the Facebook ads, we believe that this data can be used as a basis for political ads research. It has the potential to be used in research, database creation, monitoring, and other applications.
 
 ## Setup
@@ -74,9 +81,9 @@ Step 2: Go to BigQuery page in GCP console. You can find the "BigQuery" card in 
 
 Step 3: Create a BigQuery dataset. In this repo, the scripts expect you to have a dataset named `my_ad_archive`. To create a dataset, locate your project in the EXPLORER tab in BigQuery console, click on the vertical ellipses next to the name of your project, and choose "Create Dataset". For more details, please see this [documentation page](https://cloud.google.com/bigquery/docs/datasets#create-dataset). Select the tab that describes the console-based workflow.
 
-Step 4: Copy-paste the SQL statements from the file [create_tables.sql](https://github.com/Wesleyan-Media-Project/google_ads_archive/blob/main/create_tables.sql) into the code editor in BigQuery console. Run the statements. They will create two tables: `google_advertiser_agg_spend` and `google_creative_delta`. 
+Step 4: Copy-paste the SQL statements from the file [create_tables.sql](https://github.com/Wesleyan-Media-Project/google_ads_archive/blob/main/create_tables.sql) into the code editor in BigQuery console. Run the statements. They will create two tables: `google_advertiser_agg_spend` and `google_creative_delta`.
 
-The "..._agg_spend" table will store the snapshots of the data from the `advertiser_spend` table from the source dataset. You will have snapshots of the cumulative spending of the advertisers. The `google_creative_delta` table will store snapshots of the metrics for the ads running on the Google platform. 
+The "...\_agg_spend" table will store the snapshots of the data from the `advertiser_spend` table from the source dataset. You will have snapshots of the cumulative spending of the advertisers. The `google_creative_delta` table will store snapshots of the metrics for the ads running on the Google platform.
 
 Be careful: the statements from the file will perform "create or replace ..." operation: if the tables do not exist, they will be created, however, if the tables do exist, they will be overwritten and you will lose whatever data you already have in them.
 
@@ -97,20 +104,20 @@ advertiser_id, advertiser_name, public_ids_list, regions, elections, total_creat
     spend_usd
 ```
 
-In addition to the columns from the source table, the scheduled query will insert columns `import_date` and `import_time`. They are generated from the parameters available during the execution of the query. 
+In addition to the columns from the source table, the scheduled query will insert columns `import_date` and `import_time`. They are generated from the parameters available during the execution of the query.
 
 #### Columns imported by the `daily_delta_g_creatives.sql` scheduled query:
 
 ```
-    ad_id, ad_url, ad_type, regions, 
-    advertiser_id, advertiser_name, ad_campaigns_list, 
-    date_range_start, date_range_end, num_of_days, 
-    impressions, 
-    spend_usd, 
-    first_served_timestamp, last_served_timestamp, 
-    age_targeting, 
-    gender_targeting, 
-    geo_targeting_included, geo_targeting_excluded, 
+    ad_id, ad_url, ad_type, regions,
+    advertiser_id, advertiser_name, ad_campaigns_list,
+    date_range_start, date_range_end, num_of_days,
+    impressions,
+    spend_usd,
+    first_served_timestamp, last_served_timestamp,
+    age_targeting,
+    gender_targeting,
+    geo_targeting_included, geo_targeting_excluded,
     spend_range_min_usd, spend_range_max_usd
 
 ```
@@ -120,14 +127,15 @@ As with the advertiser stats, we focus on the US elections. This is reflected in
 The `daily_delta_g_creatives` query inserts only those records from the underlying table which are new. This may mean a record for an entirely new ad, or a record for an ad that has changed. This is why the query has the "delta" in its name. This approach is similar to how we ingest Facebook ads where we store a record only if it is different from the one already in our system. See the "Exclusion of duplicate records" [section](https://github.com/Wesleyan-Media-Project/fb_ads_import#exclusion-of-duplicate-records) in the `fb_ads_import` repository.
 
 The fields that may change are:
-* `date_range_end` - end of the range of dates during which the ad was active
-* `num_of_days` - number of days in the date range when the ad was active
-* `impressions` - a bucket for the impressions number, for instance `1000-2000`
-* `last_served_timestamp` - a timestamp (date plus time down to seconds) when the ad was served the last time
-* `spend_range_min_usd` - the lower bound of the range for the USD spend on the ad
-* `spend_range_max_usd` - the upper bound of the range for the USD spend on the ad
 
-The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` clause in the query. It will include those rows that are not present in the bottom part of the query following the EXCEPT clause. 
+- `date_range_end` - end of the range of dates during which the ad was active
+- `num_of_days` - number of days in the date range when the ad was active
+- `impressions` - a bucket for the impressions number, for instance `1000-2000`
+- `last_served_timestamp` - a timestamp (date plus time down to seconds) when the ad was served the last time
+- `spend_range_min_usd` - the lower bound of the range for the USD spend on the ad
+- `spend_range_max_usd` - the upper bound of the range for the USD spend on the ad
+
+The "new" condition is implemented using the `SELECT ... EXCEPT DISTINCT ...` clause in the query. It will include those rows that are not present in the bottom part of the query following the EXCEPT clause.
 
 Our own table contains the columns for the date and time of the data insertion. They are derived from the parameters `@run_date` and `@run_time` available from BigQuery.
 
@@ -141,14 +149,13 @@ Step 2: Click on the SCHEDULE -> Create new scheduled query menu items at the to
 
 <img width="678" alt="Screenshot of SQL code editor window and the SCHEDULE button" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/b08e5863-f839-47a3-9a54-297b541ca55e">
 
-
 Step 3: Clicking on the "Create scheduled query" will open a pop-up tab on the right of the screen. Here you will need to enter the required parameters:
 
-* Enter `import_creatives_delta` as the name. (Nothing in the scripts is linked to this name. It will only appear in the menu allowing you to modify or cancel query. You can change the name if you like.)
-* Select "Hours" as repeat frequency, and then enter `1` into the "Repeats every" field that will appear. You can modify the settings as you like. For example, we run our query every hour.
-* Leave the "destination table" fields empty. Our query contains an INSERT statement and it already "knows" the destination.
-* Under "Notification settings", check the box for "Send notification emails". GCP/BigQuery will send an email to the email account associated with the owner of the project if the query fails.
-* Click "SAVE" to save the query. BigQuery will launch the first import operation.
+- Enter `import_creatives_delta` as the name. (Nothing in the scripts is linked to this name. It will only appear in the menu allowing you to modify or cancel query. You can change the name if you like.)
+- Select "Hours" as repeat frequency, and then enter `1` into the "Repeats every" field that will appear. You can modify the settings as you like. For example, we run our query every hour.
+- Leave the "destination table" fields empty. Our query contains an INSERT statement and it already "knows" the destination.
+- Under "Notification settings", check the box for "Send notification emails". GCP/BigQuery will send an email to the email account associated with the owner of the project if the query fails.
+- Click "SAVE" to save the query. BigQuery will launch the first import operation.
 
 The process for the `add_g_advertiser_spend.sql` script is the same, except you will need to pick a different name.
 
@@ -164,7 +171,6 @@ As an example, below is a screenshot of the "Scheduled queries" dashboard. You c
 
 <img width="1146" alt="Screenshot of the scheduled queries dashboard" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/dcd62034-8973-4898-b08c-8fb8c135d966">
 
-
 ### Potential adjustments and issues
 
 ### Adjustments
@@ -175,17 +181,16 @@ WMP focuses on the US-based activity and, because of this, the table creation sc
 
 ### Issue 1: columns and data types
 
-Our earlier iteration of the scripts would import all currency columns. We encountered two problems in this regard: 
+Our earlier iteration of the scripts would import all currency columns. We encountered two problems in this regard:
 
 1. Some of the currency columns do not have an expected data type. For instance, in the `advertiser_spend` source table, there were issues with the Indian Rupee and Hungarian Forint columns. We had to use `SAFE_CAST(xxxx as STRING)` to import them as strings instead.
 2. Changes in schema. Google may add new columns for currencies of countries that were added to the archive. This happened with New Zealand dollars and Brazilian Real. To avoid these problems, our script hard-coded the list of columns. If you choose to use `select * ...` statement to import multiple currency columns, you need to pay attention to the possible changes. Fortunately, the email notifications are very prompt and you will be aware of the problem within minutes after it happened.
 
-
 ### Issue 2: changes of advertiser IDs
 
-The second issue does not affect the ability to import the data, but it does impact the ability to view the ad. 
+The second issue does not affect the ability to import the data, but it does impact the ability to view the ad.
 
-An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on the Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different. 
+An ad record includes information about the advertiser, specifically the advertiser id and the full url for viewing the ad on the Ad Transparency website. In some situations Google would assign a new ID to an advertiser. (One possible scenario is when several advertisers merged.) When that happens, there would be more than one record for the same ad: the ad id would remain the same, but the advertiser information would be different.
 
 As a result, **the `ad_url` field in the old ad record is not longer valid**: the ad urls include advertiser ID, and once the old ID is retired the url is no longer correct. If a user follows an old URL, they will land on apage that will say "ad no longer available" which is not the case.
 
@@ -194,8 +199,8 @@ As a result, **the `ad_url` field in the old ad record is not longer valid**: th
 Once you have your scheduled queries running, you can start analyzing the data directly in the browser. Here is an example query that will return data on 10 ads that had more than one record. This kind of data is useful in determining the cost per impression of an ad:
 
 ```
-with a as (select ad_id, count(*) as N 
-  from wmp-sandbox.my_ad_archive.google_creative_delta 
+with a as (select ad_id, count(*) as N
+  from wmp-sandbox.my_ad_archive.google_creative_delta
   where regions = 'US'
   group by ad_id
   having N > 1
@@ -210,16 +215,16 @@ order by ad_id, import_time;
 The query below will return the latest impressions for 10 ads owned by `DCCC` - Democratic Congressional Campaign Committee:
 
 ```
-with a as (select ad_id, max(import_time) as max_time 
-  from my_ad_archive.google_creative_delta 
+with a as (select ad_id, max(import_time) as max_time
+  from my_ad_archive.google_creative_delta
   where regions = 'US'
   and advertiser_name = 'DCCC'
   group by ad_id
   limit 10)
 select x.ad_id, advertiser_name, ad_type, ad_url, impressions, spend_range_min_usd, spend_range_max_usd, import_time
 from my_ad_archive.google_creative_delta as x
-inner join a 
-on a.ad_id = x.ad_id 
+inner join a
+on a.ad_id = x.ad_id
 and a.max_time = x.import_time
 order by ad_id, import_time;
 ```
