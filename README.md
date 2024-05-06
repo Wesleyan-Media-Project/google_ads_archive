@@ -1,22 +1,18 @@
 # Wesleyan Media Project - google_ads_archive
 
-Welcome! This repo is a part of the Cross-platform Election Advertising Transparency initiatIVE ([CREATIVE](https://www.creativewmp.com/)) project. CREATIVE is a joint infrastructure project of WMP and privacy-tech-lab at Wesleyan University. CREATIVE provides cross-platform integration and standardization of political ads collected from Google and Facebook.
+Welcome! The purpose of this repository is to provide the scripts that replicate the workflow used by the Wesleyan Media Project to collect Google ads using BigQuery. The scripts in this repository are used to create tables in BigQuery, set up scheduled queries to import data, and analyze the data. The scripts provided here are intended to help journalists, academic researchers, and others interested in the democratic process to understand how to scrape and organize various ads from Google's political ads archive.
 
-This repo is a part of the Data Collection step.
+This repo is a part of the [Cross-platform Election Advertising Transparency Initiative (CREATIVE)](https://www.creativewmp.com/). CREATIVE has the goal of providing the public with analysis tools for more transparency of political ads across online platforms. In particular, CREATIVE provides cross-platform integration and standardization of political ads collected from Google and Facebook. CREATIVE is a joint project of the [Wesleyan Media Project (WMP)](https://mediaproject.wesleyan.edu/) and the [privacy-tech-lab](https://privacytechlab.org/) at [Wesleyan University](https://www.wesleyan.edu).
+
+To analyze the different dimensions of political ad transparency we have developed an analysis pipeline. The scripts in this repo are part of the Data Collection Step in our pipeline.
 
 ![A picture of the repo pipeline with this repo highlighted](Creative_Pipelines.png)
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-
-- [Objective](#objective)
-
-- [Data](#data)
-
-  - [What can you do with this data?](what-can-you-do-with-this-data)
-
-- [Setup](#setup)
+- [2.Overview](#2-overview)
+  - [Data in BigQuery](#data-in-bigquery)
+- [3.Setup](#3-etup)
   - [Creating your own tables](#creating-your-own-tables)
   - [Setting up scheduled queries](#setting-up-scheduled-queries)
     - [Columns imported by the `add_g_advertiser_spend` query:](#columns-imported-by-the-add_g_advertiser_spend-query)
@@ -30,23 +26,9 @@ This repo is a part of the Data Collection step.
       - [Issue 2: changes of advertiser IDs](#issue-2-changes-of-advertiser-ids)
   - [Analyzing data in BigQuery](#analyzing-data-in-bigquery)
   - [Getting the ads' content](#getting-the-ads-content)
+- [4. Thank You](#4-thank-you)
 
-## Introduction
-
-The purpose of this repository is to provide the scripts that replicate the workflow used by the Wesleyan Media Project to collect Google ads using BigQuery.
-
-## Objective
-
-Each of our repos belongs to one or more of the following categories:
-
-- Data Collection
-- Data Processing
-- Data Classification
-- Compiled Final Data
-
-This repo is part of the Data Collection step.
-
-## Data
+## 2.Overview
 
 ### Data in BigQuery
 
@@ -65,11 +47,7 @@ The following tables are of particular interest:
 
 Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We took advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
 
-### What can you do with this data?
-
-Similar to the Facebook ads, we believe that this data can be used as a basis for political ads research. It has the potential to be used in research, database creation, monitoring, and other applications.
-
-## Setup
+## 3.Setup
 
 ### Creating your own tables
 
@@ -95,7 +73,7 @@ BigQuery has a functionality known as "scheduled queries" - the user can define 
 
 We take a full snapshot of the `advertiser_stats` table once a day. For the `creative_stats` table, we query it every hour and keep only the new records. The queries are provided in the SQL script files in this repository: `add_g_advertiser_spend.sql` and `daily_delta_g_creatives.sql`
 
-#### Columns imported by the `add_g_advertiser_spend` query:
+#### Columns imported by the `add_g_advertiser_spend` query
 
 Below is the list of the columns imported from the advertiser spend table. We are assuming that you are based in the United States and are interested in the US advertisers. Because of this, we are importing only the column `spend_usd`, which reports the advertiser spend in US dollars. If you are operating in a different country, please make sure to replace the column `spend_usd` both in the definitional query (the `create_tables.sql`) and in the scheduled query.
 
@@ -106,7 +84,7 @@ advertiser_id, advertiser_name, public_ids_list, regions, elections, total_creat
 
 In addition to the columns from the source table, the scheduled query will insert columns `import_date` and `import_time`. They are generated from the parameters available during the execution of the query.
 
-#### Columns imported by the `daily_delta_g_creatives.sql` scheduled query:
+#### Columns imported by the `daily_delta_g_creatives.sql` scheduled query
 
 ```
     ad_id, ad_url, ad_type, regions,
@@ -234,3 +212,35 @@ You can also use the BigQuery connector in Google Sheets to work with the data. 
 ### Getting the ads' content
 
 In contrast to Facebook/Meta, Google's archive does not have the content of the ads, even when the ad consists only of text. The only content-related field is `ad_type` which takes the values `TEXT`, `IMAGE` or `VIDEO`. To retrieve the contents of the ads we, with the permission of the Google Political Ads Transparency team, scrape the ads and store them in a local database on a server maintained by WMP.
+
+## 4. Thank You
+
+<p align="center"><strong>We would like to thank our financial supporters!</strong></p><br>
+
+<p align="center">This material is based upon work supported by the National Science Foundation under Grant Numbers 2235006, 2235007, and 2235008.</p>
+
+<p align="center" style="display: flex; justify-content: center; align-items: center;">
+  <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2235006">
+    <img class="img-fluid" src="nsf.png" height="150px" alt="National Science Foundation Logo">
+  </a>
+</p>
+
+<p align="center">The Cross-Platform Election Advertising Transparency Initiative (CREATIVE) is a joint infrastructure project of the Wesleyan Media Project and privacy-tech-lab at Wesleyan University in Connecticut.
+
+<p align="center" style="display: flex; justify-content: center; align-items: center;">
+  <a href="https://www.creativewmp.com/">
+    <img class="img-fluid" src="CREATIVE_logo.png"  width="220px" alt="CREATIVE Logo">
+  </a>
+</p>
+
+<p align="center" style="display: flex; justify-content: center; align-items: center;">
+  <a href="https://mediaproject.wesleyan.edu/">
+    <img src="wmp-logo.png" width="218px" height="100px" alt="Wesleyan Media Project logo">
+  </a>
+</p>
+
+<p align="center" style="display: flex; justify-content: center; align-items: center;">
+  <a href="https://privacytechlab.org/" style="margin-right: 20px;">
+    <img src="./plt_logo.png" width="200px" alt="privacy-tech-lab logo">
+  </a>
+</p>
