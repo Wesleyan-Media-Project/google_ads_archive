@@ -10,9 +10,10 @@ To analyze the different dimensions of political ad transparency we have develop
 
 ## Table of Contents
 
-- [2.Overview](#2-overview)
+- [1. Video Tutorial](#1-video-tutorial)
+- [2. Overview](#2-overview)
   - [Data in BigQuery](#data-in-bigquery)
-- [3.Setup](#3-etup)
+- [3. Setup](#3-setup)
   - [Creating your own tables](#creating-your-own-tables)
   - [Setting up scheduled queries](#setting-up-scheduled-queries)
     - [Columns imported by the `add_g_advertiser_spend` query:](#columns-imported-by-the-add_g_advertiser_spend-query)
@@ -38,7 +39,7 @@ Please try to watch the video via Chrome instead.
 https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/104949958/fcdcabad-aca9-432a-bbda-f25c531d7d19
 
 
-## 2.Overview
+## 2. Overview
 
 ### Data in BigQuery
 
@@ -57,7 +58,7 @@ The following tables are of particular interest:
 
 Even though, officially, the political ads archive is updated once a week, the tables in the dataset are updated more frequently: for instance, the `creative_stats` table is updated several times a day. We took advantage of this fact and implemented a solution that is based in Google BigQuery and collects periodic snapshots of the "lifetime" tables: the `advertiser_stats` and `creative_stats`.
 
-## 3.Setup
+## 3. Setup
 
 ### Creating your own tables
 
