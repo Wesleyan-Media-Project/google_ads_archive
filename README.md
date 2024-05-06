@@ -27,6 +27,16 @@ To analyze the different dimensions of political ad transparency we have develop
   - [Analyzing data in BigQuery](#analyzing-data-in-bigquery)
   - [Getting the ads' content](#getting-the-ads-content)
 - [4. Thank You](#4-thank-you)
+- 
+## 1. Video Tutorial
+If you are unable to see the video on Firefox with the error: 
+- No video with supported format and MIME type found
+
+Please try to watch the video via Chrome instead.
+
+
+https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/104949958/fcdcabad-aca9-432a-bbda-f25c531d7d19
+
 
 ## 2.Overview
 
