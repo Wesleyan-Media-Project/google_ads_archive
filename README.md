@@ -114,7 +114,7 @@ As an illustration, let's walk through the process of creating a query that will
 
 2. Click on the SCHEDULE -> Create new scheduled query menu items at the top of the editor pane. The screenshot below shows the location of the menu buttons.
 
-<img width="678" alt="Screenshot of SQL code editor window and the SCHEDULE button" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/b08e5863-f839-47a3-9a54-297b541ca55e">
+   <img width="678" alt="Screenshot of SQL code editor window and the SCHEDULE button" src="https://github.com/Wesleyan-Media-Project/google_ads_archive/assets/17502191/b08e5863-f839-47a3-9a54-297b541ca55e">
 
 3. Clicking on the "Create scheduled query" will open a pop-up tab on the right of the screen. Here you will need to enter the required parameters:
    - Enter `import_creatives_delta` as the name. (Nothing in the scripts is linked to this name. It will only appear in the menu allowing you to modify or cancel query. You can change the name if you like.)
