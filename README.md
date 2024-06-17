@@ -86,8 +86,8 @@ In addition to the columns from the source table, the scheduled query will inser
 
 #### 3.2.2 Columns imported by the `daily_delta_g_creatives.sql` scheduled query
 
-| ad_id, ad_url | ad_type, regions | advertiser_id | advertiser_name | ad_campaigns_list | date_range_start | date_range_end | num_of_days | impressions | spend_usd | first_served_timestamp | last_served_timestamp | age_targeting | gender_targeting | geo_targeting_included | geo_targeting_excluded | spend_range_min_usd | spend_range_max_usd |
-| ------------- | ---------------- | ------------- | --------------- | ----------------- | ---------------- | -------------- | ----------- | ----------- | --------- | ---------------------- | --------------------- | ------------- | ---------------- | ---------------------- | ---------------------- | ------------------- | ------------------- |
+| ad_id | ad_url | ad_type | regions | advertiser_id | advertiser_name | ad_campaigns_list | date_range_start | date_range_end | num_of_days | impressions | spend_usd | first_served_timestamp | last_served_timestamp | age_targeting | gender_targeting | geo_targeting_included | geo_targeting_excluded | spend_range_min_usd | spend_range_max_usd |
+| ----- | ------ | ------- | ------- | ------------- | --------------- | ----------------- | ---------------- | -------------- | ----------- | ----------- | --------- | ---------------------- | --------------------- | ------------- | ---------------- | ---------------------- | ---------------------- | ------------------- | ------------------- |
 
 As with the advertiser stats, we focus on US elections. This is reflected in the choice of the columns: the underlying source table contains data for the currencies of all countries where Google runs political ads (for instance, `spend_range_min_brl` and `spend_range_max_brl` for Brazil). We ignore these columns and keep only the `spend_range_min_usd` and `spend_range_max_usd`. We also keep the `spend_usd` column, even though it appears that Google itself is not using it, i.e., this column is always empty.
 
